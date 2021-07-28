@@ -1,5 +1,8 @@
 var questionDisplay = document.querySelector("#question-display");
 var mainDisplayEl = document.querySelector(".main-page");
+var startQuiz = document.querySelector("#start-quiz");
+var highScoreBtn = document.querySelector("#score-page");
+var highScores = document.querySelector("#high-scores");
 
 // list of scores
 var questions = [{
@@ -34,9 +37,33 @@ var questions = [{
 // var trackScore = 0;
 var quesIndex = 0;
 
+function takeToQuiz() {
+    startQuiz.addEventListener("click", function(s) {
+        console.log('start quiz clicked', s.target.innerHTML)
+        displayQuestions();
+    })
+}
+
+function takeToScores() {
+    highScoreBtn.addEventListener("click", function(v) {
+        console.log('high score btn clicked', v.target.innerHTML)
+        // highScoreLog();
+    })
+}
+
+function welcomePage(e) {
+    questionDisplay.innerHTML = '';
+    highScores.innerHTML = '';
+
+    takeToQuiz()
+    takeToScores()
+}
+
 // display questions functionality
 function displayQuestions() {
+    mainDisplayEl.innerHTML = '';
     questionDisplay.innerHTML= '';
+    highScores.innerHTML = '';
 
     var askQuestion = document.createElement("p");
     askQuestion.textContent = questions[quesIndex].question;
@@ -51,7 +78,7 @@ function displayQuestions() {
         questionDisplay.appendChild(choiceButtonEl);
         // can click buttons and prints out which one was clicked
         document.querySelector("choiceButtonEl");
-        questionDisplay.addEventListener("click", typeEvent);
+        choiceButtonEl.addEventListener("click", typeEvent);
         // choice matches the answer, then the score goes up, else it remains the same
         function typeEvent(e) {
             console.log('button was clicked!!', e.target.innerHTML)
@@ -78,4 +105,4 @@ function displayQuestions() {
     }
 }
 
-displayQuestions();
+welcomePage();
