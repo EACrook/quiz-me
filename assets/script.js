@@ -182,6 +182,14 @@ function displayLeaderBoard() {
     goHomeBtn.addEventListener("click", function() {
         location.reload()
     });
+
+    var clearScores = document.createElement("button")
+    clearScores.textContent = "Clear High Scores"
+    clearScores.addEventListener('click', () => {
+        localStorage.setItem("scores", JSON.stringify([]))
+        location.reload()
+    })
+    leaderBoard.appendChild(clearScores)
 }
 
 welcomePage();
