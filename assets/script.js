@@ -40,22 +40,22 @@ var trackScore = 0;
 var quesIndex = 0;
 
 function takeToQuiz() {
-    startQuiz.addEventListener("click", function(s) {
+    startQuiz.addEventListener("click", function (s) {
         console.log('start quiz clicked', s.target.innerHTML)
         displayQuestions();
     })
 }
 
 function takeToScores() {
-    highScoreBtn.addEventListener("click", function(v) {
+    highScoreBtn.addEventListener("click", function (v) {
         console.log('high score btn clicked', v.target.innerHTML)
         displayLeaderBoard();
     })
 }
 
-function welcomePage(e) {
+function welcomePage() {
     questionDisplay.innerHTML = '';
-    highScores.innerHTML = '';
+    endGame.innerHTML = '';
 
     takeToQuiz()
     takeToScores()
@@ -64,7 +64,7 @@ function welcomePage(e) {
 // display questions functionality
 function displayQuestions() {
     mainDisplayEl.innerHTML = '';
-    questionDisplay.innerHTML= '';
+    questionDisplay.innerHTML = '';
     leaderBoard.innerHTML = '';
 
     var askQuestion = document.createElement("p");
@@ -85,7 +85,7 @@ function displayQuestions() {
         function typeEvent(e) {
             console.log('button was clicked!!', e.target.innerHTML)
 
-            if(questions[quesIndex].answer === e.target.innerHTML) {
+            if (questions[quesIndex].answer === e.target.innerHTML) {
                 console.log('answered correctly')
 
                 trackScore++
@@ -131,25 +131,25 @@ function displayEndGame() {
     submitButtonEl.textContent = "Submit";
     endGame.appendChild(submitButtonEl);
 
-    submitButtonEl.addEventListener("click", function() {
-        var nameArray = []
-        var scoreArray = []
+    submitButtonEl.addEventListener("click", function () {
+        var scores = []
 
 
-        if(localStorage.getItem('name')){
-            nameArray = JSON.parse(localStorage.getItem('name'))
+        if (localStorage.getItem('scores')) {
+            scores = JSON.parse(localStorage.getItem('scores'))
         }
 
-        if(localStorage.getItem('score')){
-            scoreArray = JSON.parse(localStorage.getItem('score'))
-        }
 
-        
-       nameArray.push(inputInitials.value)
-       scoreArray.push(trackScore)
+        scores.push({
+            name: inputInitials.value,
+            score: trackScore
+        })
 
-        localStorage.setItem("name", JSON.stringify(nameArray));
-        localStorage.setItem("score", JSON.stringify(scoreArray));
+        scores.sort((a, b) => b.score - a.score)
+
+        scores = scores.slice(0, 3)
+
+        localStorage.setItem("scores", JSON.stringify(scores));
         endGame.innerHTML = "";
 
         displayLeaderBoard();
@@ -158,22 +158,30 @@ function displayEndGame() {
 }
 
 function displayLeaderBoard() {
+    mainDisplayEl.innerHTML = '';
+
     var leaderIntroEl = document.createElement("h2");
     leaderIntroEl.textContent = "Here are the top three leaders!"
     leaderBoard.appendChild(leaderIntroEl);
 
-    var nameArray = JSON.parse(localStorage.getItem('name'))
-    var scoreArray = JSON.parse(localStorage.getItem('score'))
+    var scores = JSON.parse(localStorage.getItem('scores'))
 
-    scoreArray.forEach(function(score, i) {
-        console.log('I in the for each!!!', i)
+    scores.forEach(function (score) {
         var listScoreEl = document.createElement("li");
-        listScoreEl.textContent = nameArray[i] + " has a score of " + score;
+        listScoreEl.textContent = score.name + " has a score of " + score.score;
 
         leaderBoard.appendChild(listScoreEl)
     })
+
+    var goHomeBtn = document.createElement("button");
+    goHomeBtn.setAttribute("type", "submit");
+    goHomeBtn.setAttribute("value", "Go Home");
+    goHomeBtn.textContent = "Go Home";
+    leaderBoard.appendChild(goHomeBtn);
+
+    goHomeBtn.addEventListener("click", function() {
+        location.reload()
+    });
 }
 
 welcomePage();
-
-// <p>Enter your initials and see where you are on the leader board.</p>
