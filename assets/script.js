@@ -38,10 +38,44 @@ var questions = [{
 // to keep track of score
 var trackScore = 0;
 var quesIndex = 0;
+var timeLeftSeconds = 20
+var intervalHandle;
+
+function timer() {
+    renderTime();
+
+    intervalHandle = setInterval(tick, 1000);
+
+    function tick() {
+        timeLeftSeconds--;
+        renderTime();
+
+        if (timeLeftSeconds < 1) {
+            clearInterval(intervalHandle);
+            displayEndGame();
+        }
+    }
+}
+
+function removeTimeHandler() {
+    timeLeftSeconds -= 2
+    renderTime()
+}
+
+function renderTime() {
+    if (timeLeftSeconds < 1) {
+        document.getElementById("quiz-timer").innerHTML = 'Time is up!'
+
+    } else {
+        document.getElementById("quiz-timer").innerHTML = `${timeLeftSeconds} seconds left`
+    }
+}
 
 function takeToQuiz() {
     startQuiz.addEventListener("click", function (s) {
         console.log('start quiz clicked', s.target.innerHTML)
+        timeLeftSeconds = 20
+        timer();
         displayQuestions();
     })
 }
@@ -87,17 +121,16 @@ function displayQuestions() {
 
             if (questions[quesIndex].answer === e.target.innerHTML) {
                 console.log('answered correctly')
-
-                trackScore++
-                quesIndex++
+                trackScore++;
             } else {
                 console.log('oops, that is wrong')
-
-                quesIndex++
+                removeTimeHandler();
             }
+            quesIndex++;
 
             if (quesIndex >= questions.length) {
                 questionDisplay.innerHTML = '';
+                clearInterval(intervalHandle);
                 displayEndGame();
                 console.log('time to run the endGame')
             } else {
@@ -110,6 +143,7 @@ function displayQuestions() {
 function displayEndGame() {
     questionDisplay.innerHTML = "";
     mainDisplayEl.innerHTML = "";
+    trackScore = trackScore + timeLeftSeconds
 
     var congratsScore = document.createElement("h3");
     congratsScore.textContent = 'Congratulations, you have finished the quiz! Your final score is: ' + trackScore + '!';
@@ -179,7 +213,7 @@ function displayLeaderBoard() {
     goHomeBtn.textContent = "Go Home";
     leaderBoard.appendChild(goHomeBtn);
 
-    goHomeBtn.addEventListener("click", function() {
+    goHomeBtn.addEventListener("click", function () {
         location.reload()
     });
 
